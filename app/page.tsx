@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 
-// Interfaces para TypeScript
 interface Todo {
   id: string;
   text: string;
@@ -12,120 +11,114 @@ interface Todo {
 type FilterType = 'all' | 'active' | 'completed';
 
 export default function Home() {
-  // Estado para la lista de tareas
   const [todos, setTodos] = useState<Todo[]>([]);
-  // Estado para el input de nueva tarea
   const [inputValue, setInputValue] = useState('');
-  // Estado para el filtro actual
   const [filter, setFilter] = useState<FilterType>('all');
-  // Estado para saber si el componente ya se montó (para evitar mismatch de hidratación)
   const [isMounted, setIsMounted] = useState(false);
 
-  // Efecto para cargar tareas de localStorage al inicio
-  // Solo se ejecuta en el cliente después de que el componente se monta
+  // Restore saved todos from localStorage upon client mount
   useEffect(() => {
     setIsMounted(true);
     const savedTodos = localStorage.getItem('todos');
     if (savedTodos) {
       try {
-        setTodos(JSON.parse(savedTodos));
+        const parsed = JSON.parse(savedTodos);
+        if (Array.isArray(parsed)) {
+          setTodos(parsed.filter(item => item && typeof item.id === 'string' && typeof item.text === 'string'));
+        }
       } catch (error) {
-        console.error('Error al parsear todos:', error);
+        console.error('Failed to parse todos from localStorage:', error);
       }
     }
   }, []);
 
-  // Efecto para guardar tareas en localStorage cada vez que cambian
+  // Synchronize todos to localStorage on change
   useEffect(() => {
     if (isMounted) {
       localStorage.setItem('todos', JSON.stringify(todos));
     }
   }, [todos, isMounted]);
 
-  // Manejador para añadir una nueva tarea
   const handleAddTodo = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!inputValue.trim()) return;
+    const trimmed = inputValue.trim();
+    if (!trimmed) return;
 
     const newTodo: Todo = {
-      id: crypto.randomUUID(), // Genera un ID único
-      text: inputValue.trim(),
+      id: crypto.randomUUID(),
+      text: trimmed,
       completed: false,
     };
 
     setTodos([newTodo, ...todos]);
-    setInputValue(''); // Limpiar el input
+    setInputValue('');
   };
 
-  // Manejador para alternar el estado de completado
   const toggleTodo = (id: string) => {
     setTodos(todos.map(todo => 
       todo.id === id ? { ...todo, completed: !todo.completed } : todo
     ));
   };
 
-  // Manejador para eliminar una tarea
   const deleteTodo = (id: string) => {
     setTodos(todos.filter(todo => todo.id !== id));
   };
 
-  // Filtrar las tareas según el estado actual del filtro
   const filteredTodos = todos.filter(todo => {
     if (filter === 'active') return !todo.completed;
     if (filter === 'completed') return todo.completed;
-    return true; // 'all'
+    return true;
   });
 
-  // Evitar renderizar contenido que dependa de localStorage en el servidor
   if (!isMounted) {
-    return null; // O un esqueleto de carga
+    return null;
   }
 
   return (
     <main className="todo-container">
       <header className="todo-header">
         <h1>Focus Tasks</h1>
-        <p>Organiza tu día con estilo y simplicidad.</p>
+        <p>Organize your day with focus, style, and simplicity.</p>
       </header>
 
-      {/* Formulario para añadir tareas */}
+      {/* Task Creation Form */}
       <form onSubmit={handleAddTodo} className="todo-form">
         <input
           type="text"
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
-          placeholder="¿Qué necesitas hacer hoy?"
+          placeholder="What do you need to accomplish today?"
           className="todo-input"
-          aria-label="Nueva tarea"
+          aria-label="New task"
         />
         <button type="submit" className="btn-primary">
-          Añadir
+          Add
         </button>
       </form>
 
-      {/* Botones de filtrado */}
+      {/* Filter Tabs */}
       <div className="todo-filters">
         <button 
           className={`filter-btn ${filter === 'all' ? 'active' : ''}`}
           onClick={() => setFilter('all')}
         >
-          Todas
+          All
         </button>
         <button 
           className={`filter-btn ${filter === 'active' ? 'active' : ''}`}
           onClick={() => setFilter('active')}
         >
-          Activas
+          Active
         </button>
         <button 
           className={`filter-btn ${filter === 'completed' ? 'active' : ''}`}
           onClick={() => setFilter('completed')}
         >
-          Completadas
+          Completed
         </button>
       </div>
 
-      {/* Lista de tareas */}
+      {/* Task List */}
       {filteredTodos.length > 0 ? (
         <ul className="todo-list">
           {filteredTodos.map(todo => (
@@ -136,17 +129,16 @@ export default function Home() {
                   checked={todo.completed}
                   onChange={() => toggleTodo(todo.id)}
                   className="todo-checkbox"
-                  aria-label={`Marcar como completada: ${todo.text}`}
+                  aria-label={`Mark as completed: ${todo.text}`}
                 />
                 <span className="todo-text">{todo.text}</span>
               </label>
               <button 
                 onClick={() => deleteTodo(todo.id)}
                 className="btn-delete"
-                aria-label={`Eliminar: ${todo.text}`}
-                title="Eliminar tarea"
+                aria-label={`Delete task: ${todo.text}`}
+                title="Delete task"
               >
-                {/* SVG inline para el icono de borrar */}
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M3 6h18"></path>
                   <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
@@ -158,7 +150,7 @@ export default function Home() {
         </ul>
       ) : (
         <div className="empty-state">
-          No hay tareas en esta vista. ¡Disfruta tu tiempo!
+          No tasks found in this view. Enjoy your day!
         </div>
       )}
     </main>

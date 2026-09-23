@@ -1,36 +1,70 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🎯 Antigravity Todo App (`antigravity-todo-app`)
 
-## Getting Started
+A responsive, minimalistic productivity and task tracking application built with Next.js 16 App Router, React 19, Tailwind CSS v4, and defensive client-side persistence.
 
-First, run the development server:
+---
 
+## Project Overview
+
+**Antigravity Todo App** is designed for focused daily planning. It provides zero-latency client-side task creation, state toggling, filtering, and deletion, persisted seamlessly into browser `localStorage` with defensive hydration validation.
+
+### Repository Naming Analysis
+- **Recommended Repository Name**: `antigravity-todo-app`
+- **Naming Formula**: **Formula A** (`[domain/product]-[core-function]`)
+- **Rationale**: Formatted in standard kebab-case specifying product line (`antigravity`) and core deliverable function (`todo-app`).
+
+---
+
+## Features
+
+- **Defensive Local Storage Persistence**: Tasks are synchronized to `localStorage` with automated schema validation to prevent hydration mismatches and corruption crashes.
+- **Dynamic Task Filtering**: Filter views instantly by task state (`All`, `Active`, `Completed`).
+- **Interactive Micro-Interactions**: Smooth hover effects, check transitions, and accessible delete actions.
+- **Next.js 16 App Router**: Modern directory layout utilizing React 19 client components with SSR hydration guards.
+- **Tailwind CSS v4 Integration**: Clean modern utility styling with minimal bundle footprint.
+
+---
+
+## Prerequisites
+
+- **Node.js**: `>= 18.18.0`
+- **Package Manager**: `npm`, `pnpm`, or `yarn`
+
+---
+
+## Installation and Run
+
+### 1. Install Dependencies
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 2. Run the Development Server
+```bash
+npm run dev
+```
+Navigate to `http://localhost:3000` in your web browser.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 3. Build for Production
+```bash
+npm run build
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### 4. Start Production Server
+```bash
+npm run start
+```
 
-## Learn More
+---
 
-To learn more about Next.js, take a look at the following resources:
+## Defensive Security Architecture
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- **Defensive Deserialization**: In `app/page.tsx`, incoming `localStorage` JSON payloads are verified to be valid arrays containing required string fields before updating component state.
+- **HTML Injection Defense**: User task strings are bound strictly through React JSX text nodes, eliminating Cross-Site Scripting (XSS) vectors.
+- **Privacy First**: Zero third-party analytics, remote trackers, or external cloud telemetry; all tasks remain 100% on the user's local machine.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+---
 
-## Deploy on Vercel
+## License
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Proprietary. All rights reserved. Not licensed for redistribution, public sublicensing, or resale.
