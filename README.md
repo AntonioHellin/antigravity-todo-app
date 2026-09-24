@@ -59,7 +59,3 @@ npm run start
 - **Privacy First**: Zero third-party analytics, remote trackers, or external cloud telemetry; all tasks remain 100% on the user's local machine.
 
 ---
-
-## License
-
-Proprietary. All rights reserved. Not licensed for redistribution, public sublicensing, or resale.
